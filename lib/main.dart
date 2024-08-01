@@ -32,8 +32,7 @@ class _MyAppState extends State<MyApp> {
             title: Text(
             [
             "Acceuil",
-            "Statistique",
-            "Historique",
+            "Profile",
             ][_currentIndex],
               style: const TextStyle(color: Colors.brown),
           ),
@@ -59,16 +58,11 @@ class _MyAppState extends State<MyApp> {
             ),
 
           SalomonBottomBarItem(
-            icon: Icon(Icons.area_chart),
-            title: Text("Statistique"),
+            icon: Icon(Icons.person),
+            title: Text("Profile"),
             selectedColor: Colors.brown,
             ),
 
-          SalomonBottomBarItem(
-            icon: Icon(Icons.list_alt_outlined),
-            title: Text("Historique"),
-            selectedColor: Colors.brown,
-            ),
           ],
         )
 
