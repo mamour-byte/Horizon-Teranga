@@ -98,15 +98,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   controller: _tabController,
                   tabs: const [
-                    Tab(icon: Icon(Icons.local_pizza)),
-                    Tab(icon: Icon(Icons.local_drink)),
-                    Tab(icon: Icon(Icons.cake)),
+                    Tab(icon: Icon(Icons.restaurant) , ),
+                    Tab(icon: Icon(Icons.party_mode) , ),
+                    Tab(icon: Icon(Icons.local_activity) ,),
                   ],
                   unselectedLabelColor: Colors.black,
-                  labelColor: Colors.blue,
+                  labelColor: Colors.brown,
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(80.0),
-                    color: Colors.blue.withOpacity(0.2),
+                    color: Colors.brown.withOpacity(0.2),
                   ),
                 ),
                 body: TabBarView(

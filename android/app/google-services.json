@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "641051720841",
+    "project_id": "horizon-teranga",
+    "storage_bucket": "horizon-teranga.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:641051720841:android:0891672f6173fbccef5a58",
+        "android_client_info": {
+          "package_name": "com.example.horizonteranga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0hv0oojiFPjW_YR67OqCY7vvAC4QUGjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:horizonteranga/pages/Maps.dart';
 import 'package:horizonteranga/pages/Profile.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'pages/HomePage.dart';
 
-void main() {
+
+void main() async{
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -32,6 +40,7 @@ class _MyAppState extends State<MyApp> {
             title: Text(
             [
             "Acceuil",
+            "Maps",
             "Profile",
             ][_currentIndex],
               style: const TextStyle(color: Colors.brown),
@@ -40,6 +49,7 @@ class _MyAppState extends State<MyApp> {
         ),
           body: [
             const HomePage(),
+            const Maps(),
             const Profile(),
           ][_currentIndex],
 
@@ -56,6 +66,12 @@ class _MyAppState extends State<MyApp> {
             title: Text("Acceuil"),
             selectedColor: Colors.brown,
             ),
+
+              SalomonBottomBarItem(
+                icon: Icon(Icons.map),
+                title: Text("Carte"),
+                selectedColor: Colors.brown,
+              ),
 
           SalomonBottomBarItem(
             icon: Icon(Icons.person),
