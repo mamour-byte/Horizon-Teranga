@@ -7,6 +7,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'pages/HomePage.dart';
 
 
+
 void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
