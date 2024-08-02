@@ -64,8 +64,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 controller: _tabController,
                 children: [
                   _buildCategoryListView(),
-                  Center(child: Text('Hotel Tab Content')),
-                  Center(child: Text('Park Tab Content')),
+                  _buildCategoryListView(),
+                  _buildCategoryListView(),
                 ],
               ),
             ),

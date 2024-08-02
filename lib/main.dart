@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:horizonteranga/pages/Profile.dart';
 import 'firebase_options.dart';
 import 'package:horizonteranga/pages/Maps.dart';
-import 'package:horizonteranga/pages/Profile.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'pages/HomePage.dart';
 
@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
         ),
           body: [
             const HomePage(),
-            const Maps(),
-            const Profile(),
+            const MapsPage(),
+            const ProfilePage(),
           ][_currentIndex],
 
           bottomNavigationBar: SalomonBottomBar(
