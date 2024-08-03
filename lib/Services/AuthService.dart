@@ -27,20 +27,28 @@ class AuthenticationService {
     }
   }
 
-  Future registerWithEmailAndPassword(String Nom, String telephone,
-      String email, String password) async {
+  Future registerWithEmailAndPassword(String nom, String email, String telephone, String password) async {
     try {
       UserCredential result =
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       if (user == null) {
         throw Exception("No user found");
       } else {
-        await DatabaseService(user.uid).saveUser(Nom, telephone);
+        await DatabaseService(user.uid).saveUser(nom, email ,telephone,password);
 
         return _userFromFirebaseUser(user);
       }
+    } catch (exception) {
+      print(exception.toString());
+      return null;
+    }
+  }
+
+
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
     } catch (exception) {
       print(exception.toString());
       return null;

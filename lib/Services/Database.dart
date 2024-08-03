@@ -6,13 +6,17 @@ class DatabaseService {
 
   DatabaseService(this.uid);
 
-  final CollectionReference<Map<String, dynamic>> userCollection =
-  FirebaseFirestore.instance.collection("User");
+  final CollectionReference<Map<String, dynamic>> userCollection = FirebaseFirestore.instance.collection("User");
 
 
 
-  Future<void> saveUser(String Nom , String Telephone) async {
-    return await userCollection.doc(uid).set({'Nom': Nom, 'Email':Telephone , });
+  Future<void> saveUser(String Nom, String Email, String Telephone, String Password) async {
+    await userCollection.doc(uid).set({
+        'NomUser': Nom,
+        'EmailUser': Email,
+        'TelephoneUser': Telephone,
+        'PasswordUser': Password
+      });
   }
 
 

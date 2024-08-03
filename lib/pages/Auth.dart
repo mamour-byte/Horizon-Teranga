@@ -16,7 +16,7 @@ class _SimpleLoginScreenState extends State<Auth> {
   final _auth = AuthenticationService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _formKeySignIn = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -70,7 +70,7 @@ class _SimpleLoginScreenState extends State<Auth> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Form(
-          key: _formKeySignIn,
+          key: _formKey,
           child: ListView(
             children: [
               SizedBox(height: screenHeight * .12),
@@ -133,7 +133,7 @@ class _SimpleLoginScreenState extends State<Auth> {
               FormButton(
                 text: 'Log In',
                 onPressed: () async {
-                  if (_formKeySignIn.currentState?.validate() ?? false) {
+                  if (_formKey.currentState?.validate() ?? false) {
                     var result = await _auth.signInWithEmailAndPassword(_emailController.value.text, _passwordController.value.text,
                     );
                     if (result == null) {
@@ -198,8 +198,14 @@ class SimpleRegisterScreen extends StatefulWidget {
 }
 
 class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
-  late String email = '', password = '', confirmPassword = '', Nom = '', Adresse = '';
+  late String email = '', password = '', confirmPassword = '', Nom = '', Telephone = '';
   String? emailError, passwordError;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nomController = TextEditingController();
+  final _telephoneController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -249,7 +255,8 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
     }
   }
 
-  final _formKeyRegister = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _auth = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +266,7 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Form(
-          key: _formKeyRegister,
+          key: _formKey,
           child: ListView(
             children: [
               SizedBox(height: screenHeight * .1),
@@ -280,15 +287,16 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
               ),
               SizedBox(height: screenHeight * .10),
               InputField(
+                controller: _nomController,
                 onChanged: (value) => setState(() => Nom = value),
                 labelText: 'Nom',
-                errorText: emailError,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.text,
                 textInputAction: TextInputAction.next,
                 autoFocus: true,
               ),
               SizedBox(height: screenHeight * .025),
               InputField(
+                controller: _emailController,
                 onChanged: (value) => setState(() => email = value),
                 labelText: 'Email',
                 errorText: emailError,
@@ -297,10 +305,10 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
               ),
               SizedBox(height: screenHeight * .025),
               InputField(
-                onChanged: (value) => setState(() => Adresse = value),
-                labelText: 'Adresse',
-                errorText: emailError,
-                keyboardType: TextInputType.emailAddress,
+                controller: _telephoneController,
+                onChanged: (value) => setState(() => Telephone = value),
+                labelText: 'Telephone',
+                keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
               ),
               SizedBox(height: screenHeight * .025),
@@ -314,6 +322,7 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
               SizedBox(height: screenHeight * .025),
               InputField(
                 onChanged: (value) => setState(() => confirmPassword = value),
+                controller: _passwordController,
                 onSubmitted: (value) => submit(),
                 labelText: 'Confirm Password',
                 errorText: passwordError,
@@ -323,7 +332,13 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
               SizedBox(height: screenHeight * .075),
               FormButton(
                 text: 'Sign Up',
-                onPressed: submit,
+                onPressed: ()async{
+                  var Nom = _nomController.text ;
+                  var email = _emailController.text;
+                  var password = _passwordController.text ;
+                  var telephone = _telephoneController.text ;
+                  await _auth.registerWithEmailAndPassword(Nom ,email , telephone , password );
+                },
               ),
               SizedBox(height: screenHeight * .075),
               TextButton(
