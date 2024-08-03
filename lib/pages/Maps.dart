@@ -79,7 +79,6 @@ class _MapsPageState extends State<MapsPage> {
                       fontFamily: 'Poppins',
                     ),
 
-
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

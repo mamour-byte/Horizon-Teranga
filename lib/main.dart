@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:horizonteranga/pages/Liste.dart';
 import 'package:horizonteranga/pages/Profile.dart';
 import 'firebase_options.dart';
 import 'package:horizonteranga/pages/Maps.dart';
@@ -43,6 +44,7 @@ class _MyAppState extends State<MyApp> {
             "Acceuil",
             "Maps",
             "Profile",
+              "Inscription"
             ][_currentIndex],
               style: const TextStyle(color: Colors.brown),
           ),
@@ -52,6 +54,7 @@ class _MyAppState extends State<MyApp> {
             const HomePage(),
             const MapsPage(),
             const ProfilePage(),
+            const Grids(),
           ][_currentIndex],
 
           bottomNavigationBar: SalomonBottomBar(
@@ -79,6 +82,12 @@ class _MyAppState extends State<MyApp> {
             title: Text("Profile"),
             selectedColor: Colors.brown,
             ),
+
+              SalomonBottomBarItem(
+                icon: Icon(Icons.add),
+                title: Text("Auth"),
+                selectedColor: Colors.brown,
+              ),
 
           ],
         )
