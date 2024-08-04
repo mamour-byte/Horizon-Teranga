@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,25 +11,41 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final List<Category> categories = [
-    Category(
-      name: 'Restaurant',
-      imageUrl: 'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHJlc3RhdXJhbnR8ZW58MHx8MHx8fDA%3D',
-    ),
-    Category(
-      name: 'Hotel',
-      imageUrl: 'https://plus.unsplash.com/premium_photo-1661962754715-d081d9ec53a3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fG1vbnVtZW50JTIwZGUlMjBsYSUyMHJlbmFpc3NhbmNlfGVufDB8fDB8fHww',
-    ),
-    Category(
-      name: 'Place',
-      imageUrl: 'https://images.unsplash.com/photo-1514321648849-f4e1d5da98dc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGZldGUlMjBmb3JyYWluZXxlbnwwfHwwfHx8MA%3D%3D',
-    ),
-  ];
+  final FirebaseFirestore _Etablissement = FirebaseFirestore.instance;
+  List<Category> categories = [];
+  List<Category> filteredCategories = [];
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 3);
+    getDocumentData();
+  }
+
+  Future<void> getDocumentData() async {
+    try {
+      QuerySnapshot querySnapshot = await _Etablissement.collection('TypeEtab').get();
+
+      setState(() {
+        categories = querySnapshot.docs.map((doc) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          return Category(
+            name: data['Etab'] ?? 'Pas de nom',
+            typetab: data['ActiviteEtab'],
+            imageUrl: data['ImageEtab'] ?? 'not found',
+          );
+        }).toList();
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération des données: $e');
+    }
+  }
+
+  void filterCategories(String typetab) {
+    setState(() {
+      filteredCategories = categories.where((category) => category.typetab == typetab).toList();
+    });
   }
 
   @override
@@ -63,9 +80,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildCategoryListView(),
-                  _buildCategoryListView(),
-                  _buildCategoryListView(),
+                  _buildCategoryListView("food"),
+                  _buildCategoryListView("loge"),
+                  _buildCategoryListView("divertissement"),
                 ],
               ),
             ),
@@ -169,15 +186,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildCategoryListView() {
+  Widget _buildCategoryListView(String typetab) {
+    List<Category> filteredList = categories.where((category) => category.typetab == typetab).toList();
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      itemCount: categories.length,
+      itemCount: filteredList.length,
       itemBuilder: (context, index) {
-        final category = categories[index];
+        final category = filteredList[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: CategoryTile(
+            typetab: category.typetab,
             imageUrl: category.imageUrl,
             imageAlignment: Alignment.topCenter,
             NameItem: category.name,
@@ -191,18 +211,21 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 class Category {
   final String name;
   final String imageUrl;
+  final String typetab;
 
-  Category({required this.name, required this.imageUrl});
+  Category({required this.name, required this.imageUrl,required this.typetab });
 }
 
 class CategoryTile extends StatelessWidget {
   const CategoryTile({
     required this.imageUrl,
     required this.NameItem,
+    required this.typetab,
     this.imageAlignment = Alignment.center,
     Key? key,
   }) : super(key: key);
 
+  final String typetab;
   final String NameItem;
   final String imageUrl;
   final Alignment imageAlignment;
@@ -225,6 +248,9 @@ class CategoryTile extends StatelessWidget {
               colorBlendMode: BlendMode.darken,
               alignment: imageAlignment,
               fit: BoxFit.cover,
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.3),
             ),
             Align(
               alignment: Alignment.center,
