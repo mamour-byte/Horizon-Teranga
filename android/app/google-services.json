@@ -12,7 +12,20 @@
           "package_name": "com.example.horizonteranga"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "641051720841-jmb4v1oivcpo3lt1c3kab7vn2d9fs748.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.horizonteranga",
+            "certificate_hash": "012394f4240cbd33bf3fc72f0cc41dea0bc72622"
+          }
+        },
+        {
+          "client_id": "641051720841-i56louqjsojq20r1s62oju304tl0i8q1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0hv0oojiFPjW_YR67OqCY7vvAC4QUGjI"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "641051720841-i56louqjsojq20r1s62oju304tl0i8q1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "641051720841-p1rbb4tu12gs19u9ica09gjqo4f2nphq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.horizonteranga"
+              }
+            }
+          ]
         }
       }
     }
