@@ -35,7 +35,7 @@ class _ShowScreenState extends State<ShowScreen> {
               ),
               TextField(
                 onChanged: (value) {},
-                decoration: const InputDecoration(labelText: 'Addresse'),
+                decoration: const InputDecoration(labelText: 'Photo de Profil'),
               ),
               TextField(
                 onChanged: (value) {},

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../model/User.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class DatabaseService {
   final String uid;
@@ -46,9 +48,6 @@ class DatabaseService {
       throw Exception('Erreur lors de la récupération des données : $e');
     }
   }
-
-
-
 
 
 

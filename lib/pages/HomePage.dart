@@ -1,5 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../Screen/CategorieTile.dart';
+import '../model/categorie.dart';
+import 'Liste.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,11 +13,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-
   final FirebaseFirestore _Etablissement = FirebaseFirestore.instance;
   List<Category> categories = [];
   List<Category> filteredCategories = [];
-
 
   @override
   void initState() {
@@ -26,7 +27,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Future<void> getDocumentData() async {
     try {
       QuerySnapshot querySnapshot = await _Etablissement.collection('TypeEtab').get();
-
       setState(() {
         categories = querySnapshot.docs.map((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -57,37 +57,43 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context),
-            const SizedBox(height: 16),
-            const Text(
-              "Nom User",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildSearchField(),
-            const SizedBox(height: 16),
-            _buildTabBar(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
+      body: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCategoryListView("food"),
-                  _buildCategoryListView("loge"),
-                  _buildCategoryListView("divertissement"),
+                  _buildHeader(context),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Nom User",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildSearchField(),
+                  const SizedBox(height: 16),
+                  _buildTabBar(),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildCategoryListView("food"),
+                        _buildCategoryListView("loge"),
+                        _buildCategoryListView("divertissement"),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -96,7 +102,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildProfileImage(),
+        IconButton(
+          icon: const Icon(Icons.menu, size: 30),
+          onPressed: () {
+            setState(() {
+              // Action de menu si nécessaire
+            });
+          },
+        ),
         const Row(
           children: [
             Icon(Icons.location_on, color: Colors.brown, size: 25),
@@ -112,21 +125,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ),
         _buildNotificationIcon(),
       ],
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: Image.network(
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D',
-        width: 60,
-        height: 60,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.error);
-        },
-      ),
     );
   }
 
@@ -201,69 +199,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             imageUrl: category.imageUrl,
             imageAlignment: Alignment.topCenter,
             NameItem: category.name,
+            onTap: () {
+              Navigator.push(context,
+                MaterialPageRoute(
+                  builder: (context) => Grids(category: category),
+                ),
+              );
+            },
           ),
         );
       },
-    );
-  }
-}
-
-class Category {
-  final String name;
-  final String imageUrl;
-  final String typetab;
-
-  Category({required this.name, required this.imageUrl,required this.typetab });
-}
-
-class CategoryTile extends StatelessWidget {
-  const CategoryTile({
-    required this.imageUrl,
-    required this.NameItem,
-    required this.typetab,
-    this.imageAlignment = Alignment.center,
-    Key? key,
-  }) : super(key: key);
-
-  final String typetab;
-  final String NameItem;
-  final String imageUrl;
-  final Alignment imageAlignment;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(
-              imageUrl,
-              colorBlendMode: BlendMode.darken,
-              alignment: imageAlignment,
-              fit: BoxFit.cover,
-            ),
-            Container(
-              color: Colors.black.withOpacity(0.3),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                NameItem,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

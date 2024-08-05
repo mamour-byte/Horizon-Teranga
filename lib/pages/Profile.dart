@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../Screen/Animation.dart';
+import '../Screen/ShowScreen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,8 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Profil')),
-            body: const Center(child: CircularProgressIndicator()),
+            appBar: AppBar(title: const Text('Profil') , backgroundColor: Colors.brown,),
+            body:   const Center(child: LoadAnimation() ),
           );
         }
 
@@ -119,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Action pour modifier le profil
+                    const ShowScreen();
                   },
                   icon: const Icon(Icons.edit),
                   label: const Text('Modifier le profil'),

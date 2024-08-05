@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../Services/AuthService.dart';
 
 class Auth extends StatefulWidget {
@@ -148,12 +150,36 @@ class _SimpleLoginScreenState extends State<Auth> {
                 },
               ),
               SizedBox(height: screenHeight * .05),
-              const Row(
+               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _SocialIconButton(icon: Icons.g_mobiledata_outlined, size: 60),
-                  _SocialIconButton(icon: Icons.facebook, size: 40),
-                  _SocialIconButton(icon: Icons.apple, size: 40),
+                  IconButton(
+                      onPressed: () async{
+                        UserCredential? userCredential = await _handleSignIn();
+                        if (userCredential != null) {
+                          print("User signed in: ${userCredential.user!.displayName}");
+                        } else {
+                          print("Error signing in.");
+                        }
+
+                      },
+                      icon: const Icon(Icons.g_mobiledata_outlined,
+                      color: Colors.brown,
+                        size: 40,
+                      )
+                  ),
+                  IconButton(
+                      onPressed: (){},
+                      icon: Icon(Icons.facebook),
+                    color: Colors.brown,
+                  ),
+                  IconButton(
+                      onPressed: (){},
+                      icon: const Icon(
+                          Icons.apple,
+                        color: Colors.brown,
+                      )
+                  ),
                 ],
               ),
               SizedBox(height: screenHeight * .05),
@@ -186,6 +212,29 @@ class _SimpleLoginScreenState extends State<Auth> {
       ),
     );
   }
+
+  Future<UserCredential?> _handleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+
+      final OAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      return await _auth.signInWithCredential(googleAuthCredential);
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
+
+
 }
 
 class SimpleRegisterScreen extends StatefulWidget {
@@ -448,20 +497,4 @@ class InputField extends StatelessWidget {
   }
 }
 
-class _SocialIconButton extends StatelessWidget {
-  final IconData icon;
-  final double size;
 
-  const _SocialIconButton({required this.icon, required this.size, Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(icon),
-      iconSize: size,
-      color: Colors.brown,
-    );
-  }
-}
