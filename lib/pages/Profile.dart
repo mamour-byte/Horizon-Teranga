@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Screen/Animation.dart';
-import '../Screen/ShowScreen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -120,9 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    const ShowScreen();
-                  },
+                  onPressed: () {},
                   icon: const Icon(Icons.edit),
                   label: const Text('Modifier le profil'),
                   style: ElevatedButton.styleFrom(

@@ -1,99 +1,213 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class MapsPage extends StatefulWidget {
-  const MapsPage({Key? key}) : super(key: key);
-
+class MapScreen extends StatefulWidget {
   @override
-  _MapsPageState createState() => _MapsPageState();
+  _MapScreenState createState() => _MapScreenState();
 }
 
-class _MapsPageState extends State<MapsPage> {
-  late GoogleMapController mapController;
-  final TextEditingController _addressController = TextEditingController();
-
-  final LatLng _initialPosition = const LatLng(14.6927, -17.4467); // Dakar, SN
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+class _MapScreenState extends State<MapScreen> {
+  LatLng _initialPosition = LatLng(48.8588443, 2.2943506); // Position par défaut (Tour Eiffel)
+  LatLng? _destination;
+  List<LatLng> polylineCoordinates = [];
+  late MapController _mapController;
+  final TextEditingController _startController = TextEditingController();
+  final TextEditingController _endController = TextEditingController();
 
   @override
-  void dispose() {
-    _addressController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+    _getUserLocation();
+  }
+
+  Future<void> _getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Le service de localisation est désactivé.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Les permissions de localisation sont refusées');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Les permissions de localisation sont refusées de manière permanente, nous ne pouvons pas demander de permissions.');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _initialPosition = LatLng(position.latitude, position.longitude);
+      _startController.text = '${position.latitude}, ${position.longitude}';
+      _mapController.move(_initialPosition, 13.0);
+    });
+  }
+
+  Future<void> _setDestinationAndRoute(LatLng destination) async {
+    setState(() {
+      _destination = destination;
+    });
+
+    if (_initialPosition != null && _destination != null) {
+      final url = Uri.parse(
+          'http://router.project-osrm.org/route/v1/driving/${_initialPosition.longitude},${_initialPosition.latitude};${_destination?.longitude},${_destination?.latitude}?geometries=geojson');
+      try {
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          final route = data['routes'][0]['geometry']['coordinates'] as List;
+          setState(() {
+            polylineCoordinates = route.map((point) {
+              return LatLng(point[1], point[0]);
+            }).toList();
+          });
+
+          // Recentre la carte sur la destination
+          _mapController.move(_destination!, 13.0);
+        } else {
+          throw Exception('Failed to load route');
+        }
+      } catch (e) {
+        print('Error fetching route: $e');
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Carte'),
+        backgroundColor: Colors.brown,
+      ),
+      body: Column(
         children: [
-          // Carte en haut de la page
-          Container(
-            height: 400,
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _initialPosition,
-                zoom: 14.0,
+          // Carte
+          Expanded(
+            flex: 2,
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                center: _initialPosition,
+                zoom: 13.0,
               ),
-            ),
-          ),
-
-          // Champ de texte pour entrer l'adresse
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Entrez votre destination',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                  ),
+                TileLayer(
+                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  subdomains: ['a', 'b', 'c'],
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _addressController,
-                  decoration: InputDecoration(
-                    hintText: 'Adresse de destination',
-                    prefixIcon: const Icon(Icons.search, color: Colors.brown),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 22),
-                ElevatedButton(
-                  onPressed: () {
-                    // Action pour rechercher l'adresse entrée
-                    // Vous pouvez intégrer une API pour convertir l'adresse en coordonnées
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                    ),
-
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.navigation),
-                      SizedBox(width: 12),
-                      Text('Rechercher'),
+                if (polylineCoordinates.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: polylineCoordinates,
+                        strokeWidth: 4.0,
+                        color: Colors.brown,
+                      ),
                     ],
                   ),
+                MarkerLayer(
+                  markers: [
+                    if (_destination != null)
+                      Marker(
+                        width: 80.0,
+                        height: 80.0,
+                        point: _destination!,
+                        builder: (ctx) => const Icon(
+                          Icons.location_pin,
+                          color: Colors.black,
+                          size: 40.0,
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
           ),
+          // Champs de saisie et boutons
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _startController,
+                          decoration: const InputDecoration(
+                            labelText: 'Départ',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.my_location),
+                        onPressed: _getUserLocation,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: _endController,
+                    decoration: InputDecoration(
+                      labelText: 'Destination',
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (value) {
+                      final coords = value.split(',');
+                      if (coords.length == 2) {
+                        final lat = double.tryParse(coords[0].trim());
+                        final lng = double.tryParse(coords[1].trim());
+                        if (lat != null && lng != null) {
+                          _setDestinationAndRoute(LatLng(lat, lng));
+                        }
+                      }
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.directions),
+                    onPressed: () {
+                      final coords = _endController.text.split(',');
+                      if (coords.length == 2) {
+                        final lat = double.tryParse(coords[0].trim());
+                        final lng = double.tryParse(coords[1].trim());
+                        if (lat != null && lng != null) {
+                          _setDestinationAndRoute(LatLng(lat, lng));
+                        }
+                      }
+                    },
+                    label: Text("Tracer l\'itinéraire"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
+      ),
     );
   }
 }
-

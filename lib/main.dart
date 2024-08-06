@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:horizonteranga/pages/Auth.dart';
-import 'package:horizonteranga/pages/Liste.dart';
 import 'package:horizonteranga/pages/Profile.dart';
 import 'Screen/Animation.dart';
 import 'firebase_options.dart';
@@ -81,7 +80,7 @@ class Home extends StatelessWidget {
             ),
             body: [
               const HomePage(),
-              const MapsPage(),
+               MapScreen(),
               const ProfilePage(),
             ][currentIndex],
 
