@@ -138,65 +138,70 @@ class _MapScreenState extends State<MapScreen> {
             flex: 1,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
+              child: ListView(
                 children: [
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _startController,
-                          decoration: const InputDecoration(
-                            labelText: 'Départ',
-                            border: OutlineInputBorder(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _startController,
+                              decoration: const InputDecoration(
+                                labelText: 'Départ',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.my_location),
+                            onPressed: _getUserLocation,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _endController,
+                        decoration: const InputDecoration(
+                          labelText: 'Destination',
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (value) {
+                          final coords = value.split(',');
+                          if (coords.length == 2) {
+                            final lat = double.tryParse(coords[0].trim());
+                            final lng = double.tryParse(coords[1].trim());
+                            if (lat != null && lng != null) {
+                              _setDestinationAndRoute(LatLng(lat, lng));
+                            }
+                          }
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        icon: Icon(Icons.directions),
+                        onPressed: () {
+                          final coords = _endController.text.split(',');
+                          if (coords.length == 2) {
+                            final lat = double.tryParse(coords[0].trim());
+                            final lng = double.tryParse(coords[1].trim());
+                            if (lat != null && lng != null) {
+                              _setDestinationAndRoute(LatLng(lat, lng));
+                            }
+                          }
+                        },
+                        label: Text("Tracer l\'itinéraire"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.brown,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.my_location),
-                        onPressed: _getUserLocation,
-                      ),
+                      SizedBox(height: 10),
                     ],
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: _endController,
-                    decoration: const InputDecoration(
-                      labelText: 'Destination',
-                      border: OutlineInputBorder(),
-                    ),
-                    onSubmitted: (value) {
-                      final coords = value.split(',');
-                      if (coords.length == 2) {
-                        final lat = double.tryParse(coords[0].trim());
-                        final lng = double.tryParse(coords[1].trim());
-                        if (lat != null && lng != null) {
-                          _setDestinationAndRoute(LatLng(lat, lng));
-                        }
-                      }
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.directions),
-                    onPressed: () {
-                      final coords = _endController.text.split(',');
-                      if (coords.length == 2) {
-                        final lat = double.tryParse(coords[0].trim());
-                        final lng = double.tryParse(coords[1].trim());
-                        if (lat != null && lng != null) {
-                          _setDestinationAndRoute(LatLng(lat, lng));
-                        }
-                      }
-                    },
-                    label: Text("Tracer l\'itinéraire"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
                   ),
                 ],
               ),

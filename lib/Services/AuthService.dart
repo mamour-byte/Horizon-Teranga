@@ -1,4 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:horizonteranga/pages/HomePage.dart';
+import '../main.dart';
 import '../model/User.dart';
 import 'Database.dart';
 
@@ -29,23 +33,27 @@ class AuthenticationService {
 
 
 
-  Future registerWithEmailAndPassword(String nom, String email, String telephone, String password) async {
+  Future<AppUser?> registerWithEmailAndPassword(String nom, String email, String telephone, String password) async {
     try {
-      UserCredential result =
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+
       if (user == null) {
         throw Exception("No user found");
       } else {
-        await DatabaseService(user.uid).saveUser(nom, email ,telephone,password);
-
+        await DatabaseService(user.uid).saveUser(nom, email, telephone, password);
         return _userFromFirebaseUser(user);
       }
+    } on FirebaseAuthException catch (e) {
+      print('Erreur FirebaseAuth: ${e.message}');
+      return null;
     } catch (exception) {
-      print(exception.toString());
+      print('Erreur: ${exception.toString()}');
       return null;
     }
   }
+
+
 
 
   Future signOut() async {

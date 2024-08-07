@@ -137,7 +137,7 @@ class DetailPage extends StatelessWidget {
         backgroundColor: Colors.brown,
       ),
 
-      body: Column(
+      body:  Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.network(
@@ -151,7 +151,6 @@ class DetailPage extends StatelessWidget {
               style: const TextStyle(fontSize: 18.0),
             ),
           ),
-
         ],
       ),
     );

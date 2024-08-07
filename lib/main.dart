@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFEEEEEE)),
-        home: StreamBuilder(
+        home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context  , AsyncSnapshot<User?> snapshot){
               if (snapshot.hasData && snapshot.data != null){
