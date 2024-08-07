@@ -45,9 +45,9 @@ class _MyAppState extends State<MyApp> {
               if (snapshot.hasData && snapshot.data != null){
                 return  Home(currentIndex: _currentIndex, setCurrentIndex: setCurrentIndex);
               }else if(snapshot.connectionState == ConnectionState.waiting){
-                return const Center( child: LoadAnimation(),);
+                return const Center( child: LoadAnimation());
               }
-              return Auth();
+              return const Auth();
             }
         )
     );

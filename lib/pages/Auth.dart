@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../Services/AuthService.dart';
+import '../main.dart';
+import 'HomePage.dart';
 
 class Auth extends StatefulWidget {
   final Function(String? email, String? password)? onSubmitted;
@@ -136,8 +138,7 @@ class _SimpleLoginScreenState extends State<Auth> {
                 text: 'Log In',
                 onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    var result = await _auth.signInWithEmailAndPassword(_emailController.value.text, _passwordController.value.text,
-                    );
+                    var result = await _auth.signInWithEmailAndPassword(_emailController.value.text, _passwordController.value.text,);
                     if (result == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -382,11 +383,35 @@ class _SimpleRegisterScreenState extends State<SimpleRegisterScreen> {
               FormButton(
                 text: 'Sign Up',
                 onPressed: ()async{
-                  var Nom = _nomController.text ;
+                if (_formKey.currentState?.validate() ?? false) {
+                  var nom = _nomController.text;
                   var email = _emailController.text;
-                  var password = _passwordController.text ;
-                  var telephone = _telephoneController.text ;
-                  await _auth.registerWithEmailAndPassword(Nom ,email , telephone , password );
+                  var password = _passwordController.text;
+                  var telephone = _telephoneController.text;
+
+                  User? user = await _auth.registerWithEmailAndPassword(nom, email, telephone, password);
+
+                  if (user != null) {
+                    print("User successfully registered: ${user.uid}");
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Inscription réussie!'),
+                      ),
+                    );
+                  } else {
+                    print("User registration failed");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Erreur lors de l\'inscription.'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                 }
                 },
               ),
               SizedBox(height: screenHeight * .075),

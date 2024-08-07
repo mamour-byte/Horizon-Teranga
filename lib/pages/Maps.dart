@@ -89,10 +89,6 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Carte'),
-        backgroundColor: Colors.brown,
-      ),
       body: Column(
         children: [
           // Carte
@@ -164,7 +160,7 @@ class _MapScreenState extends State<MapScreen> {
                   SizedBox(height: 10),
                   TextField(
                     controller: _endController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Destination',
                       border: OutlineInputBorder(),
                     ),

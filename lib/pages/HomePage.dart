@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: 4);
     getDocumentData();
   }
 
@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         _buildCategoryListView("food"),
                         _buildCategoryListView("loge"),
                         _buildCategoryListView("divertissement"),
+                        _buildCategoryListView("Transport"),
                       ],
                     ),
                   ),
@@ -173,7 +174,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       tabs: const [
         Tab(icon: Icon(Icons.restaurant)),
         Tab(icon: Icon(Icons.hotel)),
-        Tab(icon: Icon(Icons.park)),
+        Tab(icon: Icon(Icons.photo_camera)),
+        Tab(icon: Icon(Icons.bus_alert_rounded)),
       ],
       unselectedLabelColor: Colors.black,
       labelColor: Colors.brown,
