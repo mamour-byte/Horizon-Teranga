@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:horizonteranga/Screen/Animation.dart';
 import 'package:horizonteranga/model/categorie.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
+import 'Maps.dart';
 
 class Grids extends StatefulWidget {
   final Category category;
@@ -47,6 +50,7 @@ class _GridsState extends State<Grids> {
                           imageUrl: item['ImageEtab']!,
                           title: item['NomEtab']!,
                           description: item['Description']!,
+                          localisation: item['localisation'],
                         ),
                       ),
                     );
@@ -121,12 +125,14 @@ class DetailPage extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
+  final GeoPoint localisation;
 
   const DetailPage({
     Key? key,
     required this.imageUrl,
     required this.title,
     required this.description,
+    required this.localisation
   }) : super(key: key);
 
   @override
@@ -136,22 +142,100 @@ class DetailPage extends StatelessWidget {
         title: Text(title),
         backgroundColor: Colors.brown,
       ),
-
-      body:  Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              description,
-              style: const TextStyle(fontSize: 18.0),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Affichage de l'image en haut
+            Image.network(
+              imageUrl,
+              width: double.infinity,
+              height: 350,
+              fit: BoxFit.cover,
             ),
-          ),
-        ],
+
+            SizedBox(height: 20,),
+
+            // Description du lieu touristique
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                description,
+                style: TextStyle(fontSize: 16, height: 1.5),
+              ),
+            ),
+
+            SizedBox(height: 20,),
+
+            // Système d'étoiles pour la note
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  const Text(
+                    "Note:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(width: 12),
+                  RatingBar.builder(
+                    initialRating: 4,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 0.5),
+                    itemBuilder: (context, _) => const Icon( Icons.star,  color: Colors.brown, ),
+                    onRatingUpdate: (rating) {
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 20,),
+
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+
+                  Text("Contact" , style: TextStyle(fontSize: 20 ,fontWeight: FontWeight.bold ),) ,
+                  SizedBox(width: 12),
+                  Text('77 856 98 23 , 78 477 17 06' )
+                ],
+              )
+            ),
+
+            SizedBox(height: 20,),
+
+
+            // Bouton de redirection vers la page de localisation
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MapScreen(),
+                      settings: RouteSettings(
+                        arguments: localisation,
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.brown,
+                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  textStyle: TextStyle(fontSize: 16),
+                ),
+                child: const Center(
+                  child: Text("Voir la localisation"),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

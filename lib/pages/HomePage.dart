@@ -54,6 +54,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  bool _isDarkMode = false;
+
+  void _onThemeChanged(bool isDarkMode) {
+    setState(() {
+      _isDarkMode = isDarkMode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,14 +111,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          icon: const Icon(Icons.menu, size: 30),
-          onPressed: () {
-            setState(() {
-              // Action de menu si nécessaire
-            });
-          },
-        ),
+      Icon(Icons.menu),
         const Row(
           children: [
             Icon(Icons.location_on, color: Colors.brown, size: 25),

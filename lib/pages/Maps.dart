@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Assurez-vous d'importer cette bibliothèque si vous utilisez GeoPoint
 
 class MapScreen extends StatefulWidget {
   @override
@@ -17,12 +18,25 @@ class _MapScreenState extends State<MapScreen> {
   late MapController _mapController;
   final TextEditingController _startController = TextEditingController();
   final TextEditingController _endController = TextEditingController();
+  late GeoPoint localisation;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+
     _getUserLocation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Récupération de la variable localisation de type GeoPoint
+    localisation = (ModalRoute.of(context)?.settings.arguments as GeoPoint?) ?? GeoPoint(48.8588443, 2.2943506);
+
+    // Initialiser _endController avec la valeur de localisation
+    _endController.text = '${localisation.latitude}, ${localisation.longitude}';
   }
 
   Future<void> _getUserLocation() async {
@@ -89,6 +103,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: Column(
         children: [
           // Carte

@@ -139,6 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   label: 'Paramètres du compte',
                   onTap: () {},
                 ),
+
                 _buildSettingsOption(
                   context,
                   icon: Icons.lock,
