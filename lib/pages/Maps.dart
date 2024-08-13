@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Assurez-vous d'importer cette bibliothèque si vous utilisez GeoPoint
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  LatLng _initialPosition = LatLng(48.8588443, 2.2943506); // Position par défaut (Tour Eiffel)
+  LatLng _initialPosition = LatLng(14.7110099,-17.5482277); // Position par défaut (Tour Eiffel)
   LatLng? _destination;
   List<LatLng> polylineCoordinates = [];
   late MapController _mapController;
